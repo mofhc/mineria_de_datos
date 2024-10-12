@@ -1,0 +1,41 @@
+##MARÍA FERNANDA HERNÁNDEZ CHOCOCHIC
+##2173654850101
+
+```{r}
+library(arules)
+library(dplyr)
+```
+
+```{r}
+data<- read.csv('C:\\Users\\Mafer\\Documents\\Mafer\\Documents\\Master DS USAC\\T4-Minería de datos\\Clase 2\\db_csv_\\db_csv_\\PERSONA_BDP.csv', sep = ",")
+  
+```
+
+```{r}
+lapply(data, unique)
+
+```
+
+```{r}
+library(dplyr)
+df <- data %>% select(-PEA, -POCUPA, -PEI)
+
+```
+
+
+```{r}
+#el algoritmo apriori necesita soporte y confianza#
+reglas<- apriori(df,parameter= list(support = 0.2, confidence = 0.5)) #el 0.2 significa que debe cumplirse el 20% de las veces. 
+```
+```{r}
+#reglas hay que inspeccionarlas
+inspect(reglas[0:100])
+
+
+reglas<-sort(reglas, by = "lift", decreasing = TRUE)
+inspect(reglas) 
+```
+
+```
+
+
