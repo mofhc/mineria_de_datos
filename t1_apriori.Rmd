@@ -1,5 +1,5 @@
 ##MARÍA FERNANDA HERNÁNDEZ CHOCOCHIC
-##2173654850101
+##999013211
 
 ```{r}
 library(arules)
