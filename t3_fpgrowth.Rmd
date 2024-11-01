@@ -1,0 +1,80 @@
+##MARÍA FERNANDA HERNÁNDEZ CHOCOCHIC - 9990
+##FP-GROWTH
+
+```{r}
+library(arules)
+library(dplyr)
+library(fim4r)
+```
+
+```{r}
+data<- read.csv('C:\\Users\\Mafer\\Documents\\Mafer\\Documents\\Master DS USAC\\T4-Minería de datos\\Clase 2\\db_csv_\\db_csv_\\MIGRACION_BDP.csv', sep = ",")
+data
+
+```
+
+```{r}
+summary(data)
+#omitiendo columnas no relevantes
+df <- data %>% select(-COD_MUNICIPIO, -ZONA, -NUM_VIVIENDA, -NUM_HOGAR,-ID_EMIGRACION)
+df
+
+```
+
+
+```{r}
+#aplicando fp-growth con superte del 0.2 y confianza de 0.5
+reglas<- fim4r(df, method ="fpgrowth", target = "rules", support = 0.4, confidence = 0.7)
+
+str(reglas)
+
+inspect(reglas)
+
+```
+
+```{r}
+#probando un gráfico de reglas
+library(arulesViz)
+plot(reglas, method = "graph", engine ="interactive", shading ="confidence")
+
+```
+
+```{r}
+#tomando en cuenta que Huehuetenango y Jutiapa tiene fuertes reglas de asociación. Filtraremos por esos departamentos, para poder indagar un poco más. 
+
+dfHuhue<- df  %>% 
+  filter(DEPARTAMENTO==13) %>%
+  select(-DEPARTAMENTO,-AREA)
+dfHuhue$PEI5<- as.integer(dfHuhue$PEI5)
+dfHuhue$MUNICIPIO<- as.integer(dfHuhue$MUNICIPIO)
+
+dfJutiama<- df  %>% 
+  filter(DEPARTAMENTO==22) %>%
+  select(-DEPARTAMENTO,-AREA,-PEI3)
+
+```
+
+```{r}
+#corriendo el algoritmo en el frame de huehuetenango
+reglashuehue<- fim4r(dfHuhue, method ="fpgrowth", target = "rules", support = 0.2, confidence = 0.5)
+inspect(reglashuehue)
+
+framehuehue<- as(reglashuehue, "data.frame")
+framehuehue
+
+#{PEI4=[19,28)} => {PEI3=[1,2]}
+```
+
+```{r}
+#corriendo el algoritmo en el frame de jutiapa
+reglasju<- fim4r(dfJutiama, method ="fpgrowth", target = "rules", support = 0.2, confidence = 0.2)
+inspect(reglasju)
+
+frameju<- as(reglasju, "data.frame")
+frameju
+
+#{} => {PEI4=[20,29)}
+#{} => {MUNICIPIO=[2206,2217]}
+```
+
+
