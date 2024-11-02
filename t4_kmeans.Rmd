@@ -1,0 +1,65 @@
+##MARÍA FERNANDA HERNÁNDEZ CHOCOCHIC - 999013211
+##KMEANS
+
+```{r}
+library(arules)
+library(dplyr)
+library(fim4r)
+library(ggplot2)
+```
+
+```{r}
+data<- read.csv('C:\\Users\\Mafer\\Documents\\Mafer\\Documents\\Master DS USAC\\T4-Minería de datos\\Clase 2\\db_csv_\\db_csv_\\MIGRACION_BDP.csv', sep = ",")
+summary(data)
+```
+```{r}
+#verificando los datos inconsistentes.
+hist(data$PEI4, 
+     col = "skyblue", 
+     border = "black")
+
+boxplot(data$PEI4, 
+     xlab = "Edades", 
+     ylab = "Frecuencia", 
+     col = "skyblue", 
+     border = "black")
+```
+##PREPARANDO LOS DATOS
+```{r}
+#Se omitiendo columnas no relevantes.
+#Se filtran los años menores a 2024 pues estamos analizando hasta el año en curso.
+#Para fines de la práctica, las edades se limitaron hasta los 60 años. 
+#Con base a la tarea anterior, se observó que Huehuetenanto es uno de los departamentos que presenta altos índices migratorios. 
+
+df <- data %>% 
+  select(-COD_MUNICIPIO, -NUM_VIVIENDA, -NUM_HOGAR,-ID_EMIGRACION) %>% 
+  filter(PEI5<=2024,PEI4<=60,DEPARTAMENTO == 13) 
+summary(df)
+```
+
+```{r}
+#Se determina la cantidad de clusters 
+cluster <- kmeans(df, centers=4)
+```
+
+```{r}
+#Analizando las variablse PEI5=años, PEI4=edades
+ggplot(df, aes(x = PEI5, y = PEI4, color = as.factor(cluster$cluster)))+
+  geom_point()+
+  geom_point(data = as.data.frame(cluster$centers), aes(x=PEI5, y = PEI4), color = "black", size=4, shape=17)+
+  labs(title = "Años vs Edad")+
+  theme_minimal()
+```
+
+```{r}
+#Analizando las variablse DEEPARTAMNTO, PEI4=edades
+ggplot(df, aes(x = DEPARTAMENTO, y = PEI4, color = as.factor(cluster$cluster))) +
+  geom_point() +
+  geom_point(data = as.data.frame(cluster$centers), aes(x = DEPARTAMENTO, y = PEI4), color = "black", size = 4, shape = 17) +
+  geom_text(data = as.data.frame(cluster$centers), aes(x = DEPARTAMENTO, y = PEI4, label = paste("(", round(DEPARTAMENTO, 1), ", ", round(PEI4, 0), ")", sep = "")), 
+            color = "black", vjust = -1, size = 3) +
+  labs(title = "DEPARTAMENTO:Huehuetenango vs Edad") +
+  theme_minimal()
+
+```
+
