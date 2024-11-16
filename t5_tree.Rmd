@@ -1,0 +1,74 @@
+##MARÍA FERNANDA HERNÁNDEZ CHOCOCHIC - 999013211
+##Desicion Tree
+
+```{r}
+library(arules)
+library(dplyr)
+library(fim4r)
+library(ggplot2)
+library(rpart)
+library(rpart.plot)
+```
+
+```{r}
+data<- read.csv('C:\\Users\\Mafer\\Documents\\Mafer\\Documents\\Master DS USAC\\T4-Minería de datos\\Clase 2\\db_csv_\\db_csv_\\HOGAR_BDP.csv', sep = ",")
+summary(data)
+```
+
+
+```{r}
+#AREA: 1.Rural, 2.Urbana
+#PCH4: ¿De dónde obtiene principalmente el agua para consumo del hogar?
+#PCH5: ¿Qué tipo de servicio sanitario tiene este hogar?
+#PCH9_B: ¿Cuenta este hogar con estufa?
+#PCH9_E: ¿Cuenta este hogar con refrigeradora?
+#PCH13: ¿Dispone el hogar de un cuarto exclusivo para cocinar?
+
+
+arbol <- rpart(PCH14 ~
+                 AREA + PCH4 + PCH5 + PCH9_B + PCH9_E + PCH13,
+               data= data, method = "class"
+                 )
+```
+
+#PCH14: ¿Cuál es la fuente principal que utiliza el hogar para cocinar?
+#1	Gas propano
+#2	Leña
+#3	Electricidad
+#4	Carbón
+#5	Gas corriente
+#6	Otra fuente
+#7	No cocina
+
+```{r}
+rpart.plot(arbol, type = 2, extra = 0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn", main = "Resultados", cex = 0.7)
+```
+```{r}
+
+
+fuente_para_cocinar <- data.frame(
+  AREA=c(1),
+  PCH4=c(1),
+  PCH5=c(2),
+  PCH9_B=c(1),
+  PCH9_E=c(1),
+  PCH13=c(1)
+  
+  )
+
+result <- predict(arbol,fuente_para_cocinar, type="class")
+
+result
+```
+
+
+
+
+
+
+
+
+
+
+
+
