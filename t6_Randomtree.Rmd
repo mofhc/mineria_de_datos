@@ -1,0 +1,83 @@
+##MARÍA FERNANDA HERNÁNDEZ CHOCOCHIC - 999013211
+##Desicion Tree
+
+```{r}
+library(arules)
+library(dplyr)
+library(fim4r)
+library(ggplot2)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+```
+
+```{r}
+data<- read.csv('C:\\Users\\Mafer\\Documents\\Mafer\\Documents\\Master DS USAC\\T4-Minería de datos\\Clase 2\\db_csv_\\db_csv_\\HOGAR_BDP.csv', sep = ",")
+
+```
+
+```{r}
+data <- na.omit(data)
+colSums(is.na(data))
+```
+
+```{r}
+arbol<- data[, c("DEPARTAMENTO", "PCH2", "PCH3", "PCH5", "PCH9_B", "PCH9_E")]
+arbol$DEPARTAMENTO<- as.factor(arbol$DEPARTAMENTO)
+#arbol$PCH1 <- as.factor(arbol$PCH1)
+
+colSums(is.na(arbol))
+```
+
+```{r}
+set.seed(100)
+arbol<- arbol[sample(1:nrow(data)),]
+
+index<- sample(1:nrow(arbol),0.8*nrow(arbol))
+
+train <- arbol[index,]
+test <- arbol[-index,]
+
+```
+
+```{r}
+colSums(is.na(train))
+
+ floor(sqrt(ncol(train) - 1))
+ 
+ 
+```
+
+
+```{r}
+bosque <- randomForest(DEPARTAMENTO ~ 
+                         
+                 PCH2 + PCH3 + PCH5 + PCH9_B + PCH9_E,
+                 data = train,
+                 ntree= 100,
+                 mtry= 2)
+```
+
+
+```{r}
+entreno <- predict(bosque, test)
+
+entreno
+```
+
+```{r}
+dato_nuevo <- data.frame(
+  PCH2 =2,
+  PCH3 =2,
+  PCH5 =2,
+  PCH9_B=1,
+  PCH9_E=1)
+
+predict<- predict(bosque, dato_nuevo)
+predict
+```
+```{r}
+plot(bosque)
+```
+
+
